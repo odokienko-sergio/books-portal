@@ -1,0 +1,17 @@
+.vscode
+.idea
+plugins/
+docker-compose/vendor
+**/node_modules
+/core
+/db
+db.php
+stubs.php
+.env
+uploads/
+/debug.log
+/vendor/
+coverage-report/
+go-pear.phar
+.phpunit.result.cache
+composer.phar
