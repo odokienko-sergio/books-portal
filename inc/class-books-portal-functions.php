@@ -1,6 +1,6 @@
 <?php
-if ( ! class_exists( 'Books_Functions' ) ) {
-	class Books_Functions {
+if ( ! class_exists( 'Books_Portal_Functions' ) ) {
+	class Books_Portal_Functions {
 		public function register() {
 			add_action( 'init', [
 				$this,
@@ -80,30 +80,6 @@ if ( ! class_exists( 'Books_Functions' ) ) {
 			);
 		}
 
-		public function render_book_status_meta_box( $post ) {
-			// Create nonce field
-			wp_nonce_field( 'book_status_nonce', 'book_status_nonce_field' );
-
-			// Retrieve the current value of the 'status' meta field
-			$status = get_post_meta( $post->ID, 'book_status', true );
-
-			// Set the default value if no value exists
-			if ( empty( $status ) ) {
-				$status = 'unread';
-			}
-
-			// Display the meta box content
-			?>
-			<label for="book-status"><?php esc_html_e( 'Status:', 'books-portal' ); ?></label>
-			<select name="book_status" id="book-status">
-				<option
-					value="unread" <?php selected( $status, 'unread' ); ?>><?php esc_html_e( 'Unread', 'books-portal' ); ?></option>
-				<option
-					value="read" <?php selected( $status, 'read' ); ?>><?php esc_html_e( 'Read', 'books-portal' ); ?></option>
-			</select>
-			<?php
-		}
-
 		public function save_book_status_meta_box( $post_id ) {
 			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 				return $post_id;
@@ -147,9 +123,35 @@ if ( ! class_exists( 'Books_Functions' ) ) {
 				delete_post_meta( $post_id, 'book_status' );
 			}
 		}
+
+		public function render_book_status_meta_box( $post ) {
+			// Create nonce field
+			wp_nonce_field( 'book_status_nonce', 'book_status_nonce_field' );
+
+			// Retrieve the current value of the 'status' meta field
+			$status = get_post_meta( $post->ID, 'book_status', true );
+
+			// Set the default value if no value exists
+			if ( empty( $status ) ) {
+				$status = 'unread';
+			}
+
+			// Display the meta box content
+			?>
+			<label for="book-status"><?php esc_html_e( 'Status:', 'books-portal' ); ?></label>
+			<select name="book_status" id="book-status">
+				<option
+					value="unread" <?php selected( $status, 'unread' ); ?>><?php esc_html_e( 'Unread', 'books-portal' ); ?></option>
+				<option
+					value="read" <?php selected( $status, 'read' ); ?>><?php esc_html_e( 'Read', 'books-portal' ); ?></option>
+			</select>
+			<?php
+		}
+
+
 	}
 }
-if ( class_exists( 'Books_Functions' ) ) {
-	$Books_Functions = new Books_Functions();
-	$Books_Functions->register();
+if ( class_exists( 'Books_Portal_Functions' ) ) {
+	$Books_Portal_Functions = new Books_Portal_Functions();
+	$Books_Portal_Functions->register();
 }

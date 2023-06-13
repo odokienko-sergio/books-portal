@@ -17,8 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'BOOKS_PORTAL_VERSION', '1.0' );
 define( 'BOOKS_PORTAL_PATH', plugin_dir_path( __FILE__ ) );
 
-// Include the class file
-require BOOKS_PORTAL_PATH . 'inc/class-books-functions.php';
+// Include the class files
+require BOOKS_PORTAL_PATH . 'inc/class-gamajo-template-loader.php';
+require BOOKS_PORTAL_PATH . 'inc/class-books-portal-functions.php';
+require BOOKS_PORTAL_PATH . 'inc/class-books-portal-template-loader.php';
 
 class books_portal {
 	static function activation() {
