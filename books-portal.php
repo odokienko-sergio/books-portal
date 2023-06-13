@@ -18,7 +18,8 @@ define( 'BOOKS_PORTAL_VERSION', '1.0' );
 define( 'BOOKS_PORTAL_PATH', plugin_dir_path( __FILE__ ) );
 
 // Include the class file
-//require BOOKS_PORTAL_PATH . 'inc/class-books-portal.php';
+require BOOKS_PORTAL_PATH . 'inc/class-books-functions.php';
+
 class books_portal {
 	static function activation() {
 		flush_rewrite_rules();
