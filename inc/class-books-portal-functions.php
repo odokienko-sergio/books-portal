@@ -66,32 +66,51 @@ if ( ! class_exists( 'Books_Portal_Functions' ) ) {
 			) );
 		}
 
+		// Add meta box for 'book' post type
 		public function add_book_status_meta_box() {
 			add_meta_box(
-				'book-status-meta-box',
-				esc_html__( 'Book Status', 'books-portal' ),
-				[
-					$this,
-					'render_book_status_meta_box',
-				],
+				'book-status',
+				'Book Status',
+				[$this, 'render_book_status_meta_box'],
 				'books',
 				'side',
 				'default'
 			);
 		}
 
-		public function save_book_status_meta_box( $post_id ) {
-			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-				return $post_id;
+		// Render the meta box content
+		public function render_book_status_meta_box($post) {
+			// Create nonce field
+			wp_nonce_field( 'book_status_nonce', 'book_status_nonce_field' );
+
+			// Retrieve the current value of the 'book_status' meta field
+			$book_status = get_post_meta($post->ID, 'book_status', true);
+
+			// Set the default value if no value exists
+			if (empty($book_status)) {
+				$book_status = 'unread';
+			}
+			?>
+
+			<label for="book-status"><?php esc_html_e( 'Status:', 'books-portal' ); ?></label>
+			<select name="book_status" id="book-status">
+				<option value="unread" <?php selected($book_status, 'unread'); ?>><?php esc_html_e( 'Unread', 'books-portal' ); ?></option>
+				<option value="read" <?php selected($book_status, 'read'); ?>><?php esc_html_e( 'Read', 'books-portal' ); ?></option>
+			</select>
+
+			<?php
+		}
+
+		// Save the meta box data
+		public function save_book_status_meta_box($post_id) {
+			// Check if the meta box data should be saved
+			if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+				return;
 			}
 
-			if ( array_key_exists( 'book_status', $_POST ) ) {
-				update_post_meta( $post_id, 'book_status', sanitize_text_field( $_POST['book_status'] ) );
-			}
-
-			$post_type = get_post_type( $post_id );
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				return $post_id;
+			// Check if the current user has permission to edit the post
+			if (!current_user_can('edit_post', $post_id)) {
+				return;
 			}
 
 			// Verify nonce
@@ -99,56 +118,14 @@ if ( ! class_exists( 'Books_Portal_Functions' ) ) {
 				return $post_id;
 			}
 
-			if ( isset( $_POST['book_status'] ) ) {
-				if ( is_null( $_POST['book_status'] ) ) {
-					// Null value, delete the meta field
-					delete_post_meta( $post_id, 'book_status' );
-				} else {
-					$book_status = sanitize_text_field( $_POST['book_status'] );
-
-					// Additional validation checks
-					if ( ! in_array( $book_status, array(
-						'unread',
-						'read',
-					) ) ) {
-						// Invalid value, delete the meta field
-						delete_post_meta( $post_id, 'book_status' );
-					} else {
-						// Valid value, update the meta field
-						update_post_meta( $post_id, 'book_status', $book_status );
-					}
-				}
-			} else {
-				// Book status not set, delete the meta field
-				delete_post_meta( $post_id, 'book_status' );
+			// Save the 'book_status' meta field
+			if (isset($_POST['book_status'])) {
+				update_post_meta($post_id, 'book_status', sanitize_text_field($_POST['book_status']));
 			}
-		}
-
-		public function render_book_status_meta_box( $post ) {
-			// Create nonce field
-			wp_nonce_field( 'book_status_nonce', 'book_status_nonce_field' );
-
-			// Retrieve the current value of the 'status' meta field
-			$status = get_post_meta( $post->ID, 'book_status', true );
-
-			// Set the default value if no value exists
-			if ( empty( $status ) ) {
-				$status = 'unread';
-			}
-
-			// Display the meta box content
-			?>
-			<label for="book-status"><?php esc_html_e( 'Status:', 'books-portal' ); ?></label>
-			<select name="book_status" id="book-status">
-				<option
-					value="unread" <?php selected( $status, 'unread' ); ?>><?php esc_html_e( 'Unread', 'books-portal' ); ?></option>
-				<option
-					value="read" <?php selected( $status, 'read' ); ?>><?php esc_html_e( 'Read', 'books-portal' ); ?></option>
-			</select>
-			<?php
 		}
 	}
 }
+
 if ( class_exists( 'Books_Portal_Functions' ) ) {
 	$Books_Portal_Functions = new Books_Portal_Functions();
 	$Books_Portal_Functions->register();
