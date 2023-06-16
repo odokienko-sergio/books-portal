@@ -25,6 +25,14 @@ class Books_Portal_Template_Loader extends Gamajo_Template_Loader {
 			} else {
 				return plugin_dir_path(__DIR__).'templates/archive-books-portal.php';
 			}
+		} elseif (is_singular('books')) {
+			$theme_files = ['single-books-portal.php', 'books-portal/single-books-portal.php'];
+			$exist = locate_template($theme_files, false);
+			if($exist != ''){
+				return $exist;
+			} else {
+				return plugin_dir_path(__DIR__).'templates/single-books-portal.php';
+			}
 		}
 
 		return $template;

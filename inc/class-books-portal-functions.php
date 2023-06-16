@@ -147,8 +147,6 @@ if ( ! class_exists( 'Books_Portal_Functions' ) ) {
 			</select>
 			<?php
 		}
-
-
 	}
 }
 if ( class_exists( 'Books_Portal_Functions' ) ) {
