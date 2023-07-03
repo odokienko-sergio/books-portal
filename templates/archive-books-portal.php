@@ -2,6 +2,8 @@
 global $Books_Portal_Template;
 get_header(); ?>
 
+<?php $Books_Portal_Template->get_template_part( 'partials/filter' ); ?>
+
 	<div class="wrapper archive_books-portal">
 		<?php
 		if ( ! empty( $_POST['submit'] ) ) {
@@ -12,6 +14,20 @@ get_header(); ?>
 				'meta_query'     => array( 'relation' => 'AND' ),
 				'tax_query'      => array( 'relation' => 'AND' ),
 			);
+
+			if(isset($_POST['book-status']) && $_POST['book-status'] !=''){
+				array_push($args['meta_query'],array(
+					'key' => 'book_status',
+					'value' => esc_attr($_POST['book-status']),
+				));
+			}
+
+			if(isset($_POST['books_portal_author']) && $_POST['books_portal_author'] != ''){
+				array_push($args['tax_query'],array(
+					'taxonomy' => 'author',
+					'terms' => $_POST['books_portal_author'],
+				));
+			}
 
 			$books_portal = new WP_Query( $args );
 
